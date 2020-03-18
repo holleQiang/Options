@@ -66,14 +66,14 @@ public abstract class Option<V> {
     public Observable<V> toObservable() {
         return Observable.create(new ObservableOnSubscribe<V>() {
             @Override
-            public void subscribe(ObservableEmitter<V> e) throws Exception {
+            public void subscribe(final ObservableEmitter<V> e) throws Exception {
 
                 V v = get();
                 e.onNext(v);
                 final OnValueChangedListener listener = new OnValueChangedListener() {
                     @Override
                     public void onValueChanged() {
-
+                        e.onNext(get());
                     }
                 };
                 addOnValueChangedListener(listener);
