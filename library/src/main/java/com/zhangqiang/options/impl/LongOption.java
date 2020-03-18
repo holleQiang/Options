@@ -10,18 +10,23 @@ public class LongOption extends Option<Long> {
 
     private LongStore longStore;
 
-    public LongOption(@NonNull String key, @Nullable Long defaultValue, LongStore longStore) {
+    public LongOption(@NonNull String key, @Nullable Long defaultValue, @Nullable LongStore longStore) {
         super(key, defaultValue);
         this.longStore = longStore;
     }
 
     @Override
     protected void saveValue(String key, Long value) {
-        longStore.put(key, value);
+        if (longStore != null) {
+            longStore.put(key, value);
+        }
     }
 
     @Override
     protected Long getValue(String key, Long defaultValue) {
+        if (longStore == null) {
+            return defaultValue;
+        }
         return longStore.getLong(key, defaultValue);
     }
 }

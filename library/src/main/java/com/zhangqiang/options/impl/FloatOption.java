@@ -11,18 +11,23 @@ public class FloatOption extends Option<Float> {
 
     private FloatStore floatStore;
 
-    public FloatOption(@NonNull String key, @Nullable Float defaultValue, FloatStore floatStore) {
+    public FloatOption(@NonNull String key, @Nullable Float defaultValue, @Nullable FloatStore floatStore) {
         super(key, defaultValue);
         this.floatStore = floatStore;
     }
 
     @Override
     protected void saveValue(String key, Float value) {
-        floatStore.put(key,value);
+        if (floatStore != null) {
+            floatStore.put(key,value);
+        }
     }
 
     @Override
     protected Float getValue(String key, Float defaultValue) {
+        if (floatStore == null) {
+            return defaultValue;
+        }
         return floatStore.getFloat(key,defaultValue);
     }
 }
