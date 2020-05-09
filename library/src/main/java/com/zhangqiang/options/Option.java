@@ -23,8 +23,8 @@ public abstract class Option<V> {
         this.defaultValue = defaultValue;
     }
 
-    public void set(V value) {
-        if (this.value != value) {
+    public synchronized void set(V value) {
+        if (this.value != null && !this.value.equals(value)) {
             this.value = value;
             saveValue(key, value);
             if (onValueChangedListeners != null) {
@@ -39,14 +39,14 @@ public abstract class Option<V> {
 
     protected abstract V getValue(String key, V defaultValue);
 
-    public V get() {
+    public synchronized V get() {
         if (value != null) {
             return value;
         }
         return getValue(key, defaultValue);
     }
 
-    public void addOnValueChangedListener(OnValueChangedListener listener) {
+    public synchronized void addOnValueChangedListener(OnValueChangedListener listener) {
         if (onValueChangedListeners == null) {
             onValueChangedListeners = new ArrayList<>();
         }
@@ -56,7 +56,7 @@ public abstract class Option<V> {
         onValueChangedListeners.add(listener);
     }
 
-    public void removeOnValueChangedListener(OnValueChangedListener listener) {
+    public synchronized void removeOnValueChangedListener(OnValueChangedListener listener) {
         if (onValueChangedListeners == null) {
             return;
         }
