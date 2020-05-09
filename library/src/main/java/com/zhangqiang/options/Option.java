@@ -24,7 +24,7 @@ public abstract class Option<V> {
     }
 
     public synchronized void set(V value) {
-        if (this.value != null && !this.value.equals(value)) {
+        if (this.value == null && value != null || this.value != null && !this.value.equals(value)) {
             this.value = value;
             saveValue(key, value);
             if (onValueChangedListeners != null) {
