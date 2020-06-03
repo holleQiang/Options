@@ -9,6 +9,8 @@ import com.zhangqiang.options.Option;
 import com.zhangqiang.options.Options;
 import com.zhangqiang.options.store.shared.SharedValueStore;
 
+import java.util.concurrent.CountDownLatch;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -16,40 +18,52 @@ import io.reactivex.functions.Function3;
 
 public class MainActivity extends AppCompatActivity {
 
+    Option<String> stringOption = Options.ofString("ssss", "aaa", null);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Option<Integer> option = Options.ofInt("aaa", 1, new SharedValueStore(this, "aaaa"));
-        Option<Integer> option1 = Options.ofInt("bbb", 1, new SharedValueStore(this, "aaaa"));
-        Option<Integer> option2 = Options.ofInt("ccc", 1, new SharedValueStore(this, "aaaa"));
-
-        Observable.combineLatest(option.toObservable(), option1.toObservable(), option2.toObservable(), new Function3<Integer, Integer, Integer, Integer>() {
+        new Thread(new Runnable() {
             @Override
-            public Integer apply(Integer integer, Integer integer2, Integer integer3) throws Exception {
-                return integer + integer2 + integer3;
+            public void run() {
+
+                long currentTimeMillis = System.currentTimeMillis();
+                for (int i = 0; i < 10000; i++) {
+                    stringOption.set(i + "");
+                }
+                Log.i("Test", "=======写用时===========" + (System.currentTimeMillis() - currentTimeMillis));
             }
-        }).subscribe(new Observer<Integer>() {
+        }).start();
+        long currentTimeMillis = System.currentTimeMillis();
+
+        final CountDownLatch countDownLatch = new CountDownLatch(2);
+        new Thread(new Runnable() {
             @Override
-            public void onSubscribe(Disposable d) {
-
+            public void run() {
+                for (int i = 0; i < 10000; i++) {
+                    String s = stringOption.get();
+                }
+                countDownLatch.countDown();
             }
-
+        }).start();
+        new Thread(new Runnable() {
             @Override
-            public void onNext(Integer value) {
-                Log.i("Test", "============" + value);
+            public void run() {
+                long currentTimeMillis = System.currentTimeMillis();
+                for (int i = 0; i < 10000; i++) {
+                    String s = stringOption.get();
+                }
+                countDownLatch.countDown();
             }
+        }).start();
+        try {
+            countDownLatch.await();
+            Log.i("Test", "=======读用时===========" + (System.currentTimeMillis() - currentTimeMillis));
 
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

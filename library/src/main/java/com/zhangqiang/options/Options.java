@@ -4,8 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.zhangqiang.options.impl.BooleanOption;
+import com.zhangqiang.options.impl.DoubleOption;
 import com.zhangqiang.options.impl.FloatOption;
 import com.zhangqiang.options.impl.IntOption;
+import com.zhangqiang.options.impl.JsonOption;
 import com.zhangqiang.options.impl.LongOption;
 import com.zhangqiang.options.impl.StringOption;
 import com.zhangqiang.options.store.BooleanStore;
@@ -38,4 +40,11 @@ public class Options {
         return new BooleanOption(key, defaultValue, store);
     }
 
+    public static Option<Double> ofDouble(@NonNull String key, @Nullable Double defaultValue, StringStore store) {
+        return new DoubleOption(key, defaultValue, store);
+    }
+
+    public static <T> Option<T> ofJson(@NonNull String key, @Nullable T defaultValue, StringStore store, JsonOption.JsonParser<T> jsonParser) {
+        return new JsonOption<>(key, defaultValue, store,jsonParser);
+    }
 }
