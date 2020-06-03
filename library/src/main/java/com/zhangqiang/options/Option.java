@@ -21,6 +21,7 @@ public abstract class Option<V> {
     public Option(@NonNull String key, @Nullable V defaultValue) {
         this.key = key;
         this.defaultValue = defaultValue;
+        checkKey();
     }
 
     public synchronized void set(V value) {
@@ -63,8 +64,15 @@ public abstract class Option<V> {
         onValueChangedListeners.remove(listener);
     }
 
-    public synchronized void setKey(String key) {
+    public synchronized void setKey(@NonNull String key) {
         this.key = key;
+        checkKey();
+    }
+
+    private void checkKey() {
+        if (key == null || key.length() <= 0) {
+            throw new IllegalArgumentException("key cannot be null");
+        }
     }
 
     public Observable<V> toObservable() {
