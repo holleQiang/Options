@@ -13,7 +13,7 @@ import io.reactivex.functions.Cancellable;
 
 public abstract class Option<V> {
 
-    private final String key;
+    private String key;
     private final V defaultValue;
     private V value;
     private List<OnValueChangedListener> onValueChangedListeners;
@@ -61,6 +61,10 @@ public abstract class Option<V> {
             return;
         }
         onValueChangedListeners.remove(listener);
+    }
+
+    public synchronized void setKey(String key) {
+        this.key = key;
     }
 
     public Observable<V> toObservable() {
