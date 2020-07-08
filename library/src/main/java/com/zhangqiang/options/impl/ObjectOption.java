@@ -18,6 +18,6 @@ public class ObjectOption<V> extends Option<V> {
 
     @Override
     protected V getValue(String key, V defaultValue) {
-        return null;
+        return defaultValue;
     }
 }
