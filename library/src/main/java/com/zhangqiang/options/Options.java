@@ -9,6 +9,7 @@ import com.zhangqiang.options.impl.FloatOption;
 import com.zhangqiang.options.impl.IntOption;
 import com.zhangqiang.options.impl.JsonOption;
 import com.zhangqiang.options.impl.LongOption;
+import com.zhangqiang.options.impl.ObjectOption;
 import com.zhangqiang.options.impl.StringOption;
 import com.zhangqiang.options.store.BooleanStore;
 import com.zhangqiang.options.store.FloatStore;
@@ -46,5 +47,9 @@ public class Options {
 
     public static <T> Option<T> ofJson(@NonNull String key, @Nullable T defaultValue, StringStore store, JsonOption.JsonParser<T> jsonParser) {
         return new JsonOption<>(key, defaultValue, store,jsonParser);
+    }
+
+    public static <T> Option<T> ofObject(@NonNull String key, @Nullable T defaultValue) {
+        return new ObjectOption<>(key, defaultValue);
     }
 }
