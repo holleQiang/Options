@@ -93,4 +93,26 @@ public abstract class Option<V> {
             }
         });
     }
+
+    public Observable<V> toColdObservable() {
+        return Observable.create(new ObservableOnSubscribe<V>() {
+            @Override
+            public void subscribe(final ObservableEmitter<V> e) throws Exception {
+
+                final OnValueChangedListener listener = new OnValueChangedListener() {
+                    @Override
+                    public void onValueChanged() {
+                        e.onNext(get());
+                    }
+                };
+                addOnValueChangedListener(listener);
+                e.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        removeOnValueChangedListener(listener);
+                    }
+                });
+            }
+        });
+    }
 }
